@@ -1,4 +1,4 @@
-# 🚀 Next.js Frontend Starter
+# AI Model Tuning with Next.js
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.1-black.svg)](https://nextjs.org)
 [![React](https://img.shields.io/badge/React-19.2-blue.svg)](https://react.dev)
@@ -10,9 +10,9 @@
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)]()
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com)
 
-> **Enterprise-Grade Next.js Frontend Application with Real-time Features**
+> **AI Model Tuning with Next.js: A Full-stack Next.js app designed to fine-tune machine learning models**
 
-A comprehensive, production-ready Next.js 15 frontend application built with React 19, featuring JWT authentication, real-time WebSocket communication, advanced media management, role-based access control, internationalization, and a beautiful modern UI with shadcn/ui components.
+This repository contains a **Next.js 15 frontend app** for fine-tuning AI models, built with **React 19.2**, **TypeScript**, **Prisma**, and other modern technologies. It is a feature-packed solution designed to handle advanced AI model training workflows, all while providing a sleek and responsive user interface.
 
 ## 📋 Table of Contents
 
@@ -24,10 +24,7 @@ A comprehensive, production-ready Next.js 15 frontend application built with Rea
 - [📚 Project Structure](#-project-structure)
 - [🎨 Key Features Explained](#-key-features-explained)
 - [🔌 API Integration](#-api-integration)
-- [🌐 Internationalization](#-internationalization)
 - [📱 Real-time Features](#-real-time-features)
-- [🎯 Usage Examples](#-usage-examples)
-- [🐳 Docker Deployment](#-docker-deployment)
 - [📄 License](#-license)
 
 ## ✨ Features
@@ -35,122 +32,44 @@ A comprehensive, production-ready Next.js 15 frontend application built with Rea
 ### 🎯 Core Capabilities
 
 - **🔐 Advanced Authentication System**
-  - Multi-token JWT authentication (Access, Session, Refresh tokens)
-  - OTP verification via Email, SMS, and WhatsApp
-  - Password management (set, change, reset)
-  - Email/Phone verification
-  - Session management with token rotation
-  - Secure logout with token blacklisting
-
-- **👥 User Management**
-  - Comprehensive user profiles with rich metadata
-  - User status management (active, inactive, suspended, verified)
-  - User type classification
-  - Profile picture upload with MediaPicker integration
-  - User search and filtering
-  - Bulk operations support
-
-- **🔑 Role-Based Access Control (RBAC)**
-  - Flexible permission system with groups and permissions
-  - Permission-based route guards
-  - Component-level permission checks
-  - User group management
-  - Permission analytics and statistics
+  - JWT authentication with multi-token support
+  - OTP verification (Email/SMS/WhatsApp)
+  - Secure password management
 
 - **📊 Real-time Dashboard**
-  - Live statistics with WebSocket updates
-  - Interactive charts (Line, Bar, Pie, Area)
-  - User growth tracking
-  - Analytics by status, type, country, language, auth type
-  - Recent sign-ins monitoring
-  - Real-time data refresh
+  - Live model training statistics
+  - Interactive charts and analytics (Line, Bar, Pie)
+  - Real-time updates via WebSocket
 
-- **📁 Advanced Media Management**
-  - Google Cloud Storage & Local Storage support
-  - MediaPicker component for easy media selection
-  - Folder organization system
-  - Public/Private media with access keys
-  - Image caching and optimization
-  - Bulk upload and delete operations
-  - Media statistics and analytics
-  - Thumbnail generation
-  - File type detection and organization
-
-- **📝 Activity Logging**
-  - Comprehensive audit trail
-  - Real-time activity updates via WebSocket
-  - User action tracking
-  - Filtering and search capabilities
-  - Activity statistics (INFO, WARNING, ERROR)
-  - Detailed activity metadata
+- **🔧 Model Tuning & Fine-Tuning**
+  - Intuitive UI for adjusting hyperparameters
+  - Real-time feedback for training progress
+  - Easy integration with AI/ML models built in TensorFlow, PyTorch, etc.
 
 - **🌍 Internationalization (i18n)**
-  - Full English and Arabic support
+  - Full support for English and Arabic languages
   - RTL (Right-to-Left) layout support
   - Dynamic language switching
-  - Module-based translation system
-  - Automatic locale detection
+
+- **⚙️ Advanced Media Management**
+  - Manage datasets and training media
+  - Google Cloud Storage integration
+  - File upload, optimization, and caching
+
+- **📈 Performance & Optimization**
+  - Redis caching for fast API responses
+  - Lazy loading for media and components
+  - Code-splitting for optimized loading
 
 - **🎨 Modern UI/UX**
-  - Beautiful, responsive design with Tailwind CSS
-  - shadcn/ui component library
-  - Dark/Light/System theme support
-  - Collapsible sidebar navigation
-  - Advanced search functionality
-  - Toast notifications
-  - Confirmation dialogs
-  - Loading states and skeletons
-
-- **⚡ Real-time Communication**
-  - WebSocket integration with Socket.io
-  - Real-time dashboard updates
-  - Live activity log updates
-  - Instant media library updates
-  - Notification system
-  - Room-based subscriptions
-
-- **💾 Caching & Performance**
-  - Redis caching layer
-  - Client-side image caching
-  - Media list caching
-  - Cache invalidation strategies
-  - Optimized API calls
-  - Lazy loading and code splitting
-
-- **🔔 Notification System**
-  - Real-time notifications
-  - Unread count tracking
-  - Notification dropdown
-  - Mark as read functionality
-
-- **⚙️ Project Settings**
-  - Logo management (Main, Header, Footer)
-  - Social media links configuration
-  - SEO & Meta tags management
-  - Contact & support information
-  - General project information
-
-- **📈 System Analytics**
-  - System health monitoring
-  - Error tracking and logging
-  - Cache statistics
-  - Docker status
-  - Top processes monitoring
-  - Log viewer with filtering
-
-- **👥 Account Sharing**
-  - Share account access with other users
-  - Send and receive access invitations
-  - Request access to other accounts
-  - Manage shared access permissions
-  - View account sharing activity
-  - Access level control (view, edit, full)
-  - Real-time notifications for sharing events
+  - Built with Tailwind CSS for responsive and modern design
+  - Dynamic theme switching (Dark/Light mode)
+  - shadcn/ui component library for accessibility
 
 ### 🔧 Technical Features
 
-- **Next.js 15.1+**: App Router, Server Components, API Routes
-- **React 19.2**: Latest React features with concurrent rendering
+- **Next.js 15.1**: Server-side rendering, App Router, API Routes
+- **React 19.2**: Concurrent rendering, hooks, and context API
 - **TypeScript 5.0**: Full type safety across the application
 - **Prisma ORM**: Type-safe database access with PostgreSQL
 - **Socket.io**: Real-time bidirectional communication
@@ -160,17 +79,8 @@ A comprehensive, production-ready Next.js 15 frontend application built with Rea
 - **Winston**: Professional logging system
 - **Recharts**: Beautiful chart library
 - **Axios**: HTTP client for API calls
-- **ioredis**: Redis client for Node.js
 
-### 🎨 UI Components
 
-- **Layout Components**: Navbar, Sidebar, Footer, MainLayout
-- **Form Components**: Input, Textarea, Select, OTP Input, Country Selector
-- **Data Display**: Card, Badge, Avatar, Tabs, Charts
-- **Feedback**: Toast, Dialog, Confirm Dialog, Loading States
-- **Media**: MediaPicker, FolderManager, CachedImage
-- **Navigation**: Side Panel, Dropdown Menu
-- **Authentication**: PageGuard, StatusGuard, PermissionGuard
 
 ## 🏗️ Architecture
 
