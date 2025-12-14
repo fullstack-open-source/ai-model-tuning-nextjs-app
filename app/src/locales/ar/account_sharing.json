@@ -1,0 +1,148 @@
+{
+  "account_sharing": "مشاركة الحساب",
+  "description": "إدارة الوصول المشترك للحساب والتعاون بشكل آمن",
+  "share_access": "مشاركة الوصول",
+  "request_access": "طلب الوصول",
+  
+  "tabs": {
+    "shared_with_me": "مشترك معي",
+    "shared_by_me": "مشترك مني",
+    "invitations": "الدعوات",
+    "requests": "طلبات الوصول",
+    "activity": "النشاط"
+  },
+  
+  "statistics": {
+    "active_shares": "المشاركات النشطة",
+    "pending_invitations": "الدعوات المعلقة",
+    "access_requests": "طلبات الوصول",
+    "shared_by_me": "مشترك مني"
+  },
+  
+  "access_levels": {
+    "view_only": "عرض فقط",
+    "view_only_description": "يمكن عرض معلومات الحساب فقط، غير مسموح بالتعديلات",
+    "limited": "وصول محدود",
+    "limited_description": "يمكن العرض وتنفيذ إجراءات محدودة",
+    "full": "وصول كامل",
+    "full_description": "وصول كامل لجميع ميزات الحساب"
+  },
+  
+  "status": {
+    "active": "نشط",
+    "pending": "معلق",
+    "accepted": "مقبول",
+    "declined": "مرفوض",
+    "revoked": "ملغى",
+    "expired": "منتهي",
+    "cancelled": "ملغى"
+  },
+  
+  "empty_states": {
+    "no_shared_accounts": "لا توجد حسابات مشتركة",
+    "no_shared_accounts_description": "عندما يشارك شخص ما وصول حسابه معك، سيظهر هنا.",
+    "no_shared_access": "لا يوجد وصول مشترك",
+    "no_shared_access_description": "لم تشارك وصول حسابك مع أي شخص بعد.",
+    "no_pending_invitations": "لا توجد دعوات معلقة",
+    "no_sent_invitations": "لا توجد دعوات مرسلة",
+    "no_access_requests": "لا توجد طلبات وصول معلقة",
+    "no_activity": "لا يوجد نشاط بعد"
+  },
+  
+  "invite_modal": {
+    "title": "مشاركة وصول الحساب",
+    "description": "دعوة شخص للوصول إلى حسابك",
+    "recipient": "المستلم",
+    "recipient_placeholder": "البحث بالبريد الإلكتروني أو الاسم...",
+    "access_level": "مستوى الوصول",
+    "message": "رسالة (اختياري)",
+    "message_placeholder": "أضف رسالة شخصية...",
+    "send_invitation": "إرسال الدعوة"
+  },
+  
+  "request_modal": {
+    "title": "طلب وصول الحساب",
+    "description": "طلب الوصول إلى حساب مستخدم آخر",
+    "account_owner_email": "بريد صاحب الحساب",
+    "email_placeholder": "أدخل عنوان البريد الإلكتروني...",
+    "message": "رسالة (اختياري)",
+    "message_placeholder": "اشرح سبب حاجتك للوصول...",
+    "send_request": "إرسال الطلب"
+  },
+  
+  "actions": {
+    "accept": "قبول",
+    "decline": "رفض",
+    "grant": "منح",
+    "revoke": "إلغاء",
+    "leave": "مغادرة",
+    "cancel": "إلغاء",
+    "resend": "إعادة إرسال",
+    "edit": "تعديل",
+    "access": "وصول",
+    "view_details": "عرض التفاصيل"
+  },
+  
+  "confirmations": {
+    "revoke_share": "هل أنت متأكد من إلغاء هذه المشاركة؟",
+    "leave_share": "هل أنت متأكد من مغادرة هذا الحساب المشترك؟",
+    "cancel_invitation": "هل أنت متأكد من إلغاء هذه الدعوة؟"
+  },
+  
+  "notifications": {
+    "invitation_sent": "تم إرسال الدعوة بنجاح",
+    "request_sent": "تم إرسال طلب الوصول بنجاح",
+    "invitation_accepted": "تم قبول الدعوة بنجاح",
+    "invitation_declined": "تم رفض الدعوة",
+    "share_revoked": "تم إلغاء المشاركة بنجاح",
+    "share_left": "لقد غادرت الحساب المشترك"
+  },
+  
+  "accept_page": {
+    "title": "دعوة مشاركة الحساب",
+    "subtitle": "تمت دعوتك للوصول إلى حساب",
+    "wants_to_share": "يريد مشاركة حسابه معك",
+    "personal_message": "رسالة شخصية",
+    "expires": "تنتهي",
+    "sign_in_prompt": "سجل الدخول لقبول هذه الدعوة",
+    "sign_in_description": "تحتاج لتسجيل الدخول لقبول هذه الدعوة. إذا لم يكن لديك حساب، يمكنك إنشاء واحد.",
+    "create_account": "إنشاء حساب",
+    "sign_in": "تسجيل الدخول",
+    "accept_invitation": "قبول الدعوة",
+    "invitation_accepted": "تم قبول الدعوة!",
+    "invitation_declined": "تم رفض الدعوة",
+    "you_now_have_access": "لديك الآن وصول {access_level} إلى حساب {owner_name}.",
+    "declined_message": "لقد رفضت هذه الدعوة. سيتم إخطار المرسل.",
+    "view_shared_accounts": "عرض الحسابات المشتركة",
+    "go_to_dashboard": "الذهاب للوحة التحكم",
+    "invalid_invitation": "دعوة غير صالحة",
+    "invitation_expired": "انتهت صلاحية الدعوة",
+    "expired_message": "انتهت صلاحية هذه الدعوة في {date}. يرجى طلب من {sender} إرسال دعوة جديدة.",
+    "already_responded": "الدعوة {status}"
+  },
+  
+  "activity_types": {
+    "share_invited": "تم إرسال دعوة مشاركة الحساب",
+    "share_accepted": "تم قبول دعوة المشاركة",
+    "share_declined": "تم رفض دعوة المشاركة",
+    "share_revoked": "تم إلغاء وصول مشاركة الحساب",
+    "share_expired": "انتهت صلاحية مشاركة الحساب",
+    "access_request_sent": "تم إرسال طلب الوصول",
+    "access_request_accepted": "تم قبول طلب الوصول",
+    "access_request_declined": "تم رفض طلب الوصول",
+    "access_used": "تم الوصول إلى الحساب المشترك",
+    "permissions_updated": "تم تحديث إعدادات المشاركة",
+    "share_renewed": "تم تجديد مشاركة الحساب"
+  },
+  
+  "labels": {
+    "shared": "مشترك",
+    "by": "بواسطة",
+    "access_to": "الوصول إلى",
+    "received_invitations": "الدعوات المستلمة",
+    "sent_invitations": "الدعوات المرسلة",
+    "requests_to_your_account": "طلبات الوصول لحسابك",
+    "account_sharing_activity": "نشاط مشاركة الحساب"
+  }
+}
+

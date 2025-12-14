@@ -1,0 +1,16 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Next.js Frontend DB",
+      "Group": "Docker",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "postgres",
+      "Username": "nextjs_db",
+      "SSLMode": "prefer",
+      "PassFile": "/pgadmin4/pgpass",
+      "Comment": "PostgreSQL database for Next.js Frontend application"
+    }
+  }
+}
+

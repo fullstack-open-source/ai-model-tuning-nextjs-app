@@ -1,0 +1,484 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User Model - Basic structure for relationships
+model User {
+  user_id      String    @id @default(uuid()) @db.Uuid
+  created_at   DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  last_updated DateTime? @default(now()) @updatedAt @map("last_updated") @db.Timestamp(6)
+
+  // Basic Information
+  first_name          String?   @map("first_name")
+  last_name           String?   @map("last_name")
+  user_name           String?   @map("user_name") // Username/handle for the user
+  bio                 String?   // User biography/about me
+  country             String?
+  gender              String?
+  dob                 DateTime? @db.Timestamp(6)
+  email               String?   @unique
+  profile_picture_url String?   @map("profile_picture_url")
+  phone_number        Json?     @map("phone_number") @db.JsonB
+
+  // Authentication
+  auth_type                String?   @map("auth_type")
+  password                 String
+  google_id                String?   @unique @map("google_id")
+  apple_id                 String?   @unique @map("apple_id")
+  facebook_id              String?   @unique @map("facebook_id")
+  linkedin_id              String?   @unique @map("linkedin_id")
+  github_id                String?   @unique @map("github_id")
+  microsoft_id             String?   @unique @map("microsoft_id")
+  two_factor_enabled       Boolean?  @default(false) @map("two_factor_enabled")
+  two_factor_method        String?   @map("two_factor_method")
+  two_factor_secret        String?   @map("two_factor_secret")
+  remember_me              Boolean?  @default(false) @map("remember_me")
+  last_login               DateTime? @map("last_login") @db.Timestamp(6)
+  last_activity            DateTime? @map("last_activity") @db.Timestamp(6)
+  last_password_changed    DateTime? @map("last_password_changed") @db.Timestamp(6)
+  password_changed_at      DateTime? @map("password_changed_at") @db.Timestamp(6)
+  email_verified           Boolean?  @default(false) @map("email_verified")
+  email_verification_token String?   @map("email_verification_token")
+  is_email_verified        Boolean?  @default(false) @map("is_email_verified") // Alias for email_verified
+  email_verified_at        DateTime? @map("email_verified_at") @db.Timestamp(6) // Timestamp when email was verified
+  phone_verified           Boolean?  @default(false) @map("phone_verified")
+  phone_verification_token String?   @map("phone_verification_token")
+  is_phone_verified        Boolean?  @default(false) @map("is_phone_verified") // Alias for phone_verified
+  phone_number_verified_at DateTime? @map("phone_number_verified_at") @db.Timestamp(6) // Timestamp when phone was verified
+
+  // Verification
+  verification_code            String?   @map("verification_code")
+  verification_code_expires_at DateTime? @map("verification_code_expires_at") @db.Timestamp(6)
+
+  // Settings
+  language                   String?   @default("en")
+  theme                      String?   @default("system")
+  timezone                   String?   @default("UTC")
+  profile_accessibility      String?   @default("public") @map("profile_accessibility")
+  user_type                  String?   @default("customer") @map("user_type") // User type: customer, admin, etc.
+  enable_email_notification  Boolean?  @default(true) @map("enable_email_notification")
+  enable_push_notification   Boolean?  @default(true) @map("enable_push_notification")
+  enable_sms_notification    Boolean?  @default(true) @map("enable_sms_notification")
+  enable_login_notification  Boolean?  @default(true) @map("enable_login_notification")
+  enable_security_alerts     Boolean?  @default(true) @map("enable_security_alerts")
+  enable_newsletter          Boolean?  @default(true) @map("enable_newsletter")
+  enable_marketing_emails    Boolean?  @default(true) @map("enable_marketing_emails")
+  enable_activity_digest     Boolean?  @default(true) @map("enable_activity_digest")
+  activity_digest_frequency  String?   @default("daily") @map("activity_digest_frequency")
+  data_collection_consent    Boolean?  @default(false) @map("data_collection_consent")
+  marketing_consent          Boolean?  @default(false) @map("marketing_consent")
+  data_collection_consent_at DateTime? @map("data_collection_consent_at") @db.Timestamp(6)
+  marketing_consent_at       DateTime? @map("marketing_consent_at") @db.Timestamp(6)
+
+  // Session Management
+  active_sessions    Json?   @default("[]") @map("active_sessions") @db.JsonB
+  trusted_devices    Json?   @default("[]") @map("trusted_devices") @db.JsonB
+  login_history      Json?   @default("[]") @map("login_history") @db.JsonB
+  failed_login_count Int?    @default(0) @map("failed_login_count")
+  max_sessions       Int?    @default(5) @map("max_sessions")
+  session_timeout    Int?    @default(3600) @map("session_timeout")
+  refresh_token      String? @map("refresh_token")
+
+  // Account Status
+  is_active                 Boolean?  @default(true) @map("is_active")
+  is_verified               Boolean?  @default(false) @map("is_verified")
+  is_profile_completed      Boolean?  @default(false) @map("is_profile_completed")
+  account_status            String?   @default("active") @map("account_status")
+  suspension_reason         String?   @map("suspension_reason")
+  suspension_expires_at     DateTime? @map("suspension_expires_at") @db.Timestamp(6)
+  deactivation_reason       String?   @map("deactivation_reason")
+  deactivation_requested_at DateTime? @map("deactivation_requested_at") @db.Timestamp(6)
+  deletion_requested_at     DateTime? @map("deletion_requested_at") @db.Timestamp(6)
+  anonymized_at             DateTime? @map("anonymized_at") @db.Timestamp(6)
+  deleted_at                DateTime? @map("deleted_at") @db.Timestamp(6)
+
+  // Extra Metadata
+  metadata Json? @db.JsonB
+
+  // Relations
+  groups       UserGroup[]
+  permissions  UserPermission[]
+  media        Media[]
+  media_access MediaAccess[]
+
+  // Notifications relation
+  notifications Notification[]
+
+  // Activity Logs
+  activityLogs ActivityLog[]
+
+  // Account Sharing Relations
+  sharesOwned            AccountShare[]           @relation("ShareOwner")
+  sharesReceived         AccountShare[]           @relation("ShareRecipient")
+  invitationsSent        AccountShareInvitation[] @relation("InvitationSender")
+  invitationsReceived    AccountShareInvitation[] @relation("InvitationRecipient")
+  accessRequestsReceived AccountShareInvitation[] @relation("InvitationTargetOwner")
+  accountShareActivities AccountShareActivity[]
+
+  // UserGroup Relations
+  assignedUserGroups UserGroup[] @relation("UserGroupAssigner") // Groups assigned by this user
+
+  @@index([email])
+  @@index([phone_number])
+  @@index([is_active])
+  @@index([account_status])
+  @@index([created_at])
+  @@index([user_name])
+  @@index([user_type])
+  @@index([is_email_verified])
+  @@index([is_phone_verified])
+  @@map("users")
+}
+
+// Group Model
+model Group {
+  group_id    String    @id @default(uuid()) @db.Uuid
+  name        String    @unique
+  codename    String?   @unique
+  description String?
+  is_default  Boolean?  @default(false) @map("is_default")
+  is_active   Boolean?  @default(true) @map("is_active")
+  is_system   Boolean?  @default(false) @map("is_system")
+  created_at  DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relations
+  users       UserGroup[]
+  permissions GroupPermission[]
+
+  @@index([name])
+  @@index([codename])
+  @@index([is_active])
+  @@map("groups")
+}
+
+// Permission Model
+model Permission {
+  permission_id String    @id @default(uuid()) @db.Uuid
+  name          String    @unique
+  codename      String?   @unique
+  description   String?
+  category      String? // Category/Module grouping (auth, user, profile, etc.)
+  module        String? // Module name (can be same as category or more specific)
+  action        String? // Action type (view, create, edit, delete, etc.)
+  resource      String? // Resource type (user, group, permission, etc.)
+  created_at    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at    DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relations
+  groups GroupPermission[]
+  users  UserPermission[]
+
+  @@index([name])
+  @@index([codename])
+  @@index([category])
+  @@index([module])
+  @@map("permissions")
+}
+
+// UserGroup Junction Table
+model UserGroup {
+  id                  String    @id @default(uuid()) @db.Uuid
+  user_id             String    @db.Uuid
+  group_id            String    @db.Uuid
+  assigned_by_user_id String?   @map("assigned_by_user_id") @db.Uuid // User who assigned this group
+  created_at          DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+
+  user        User  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  group       Group @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+  assigned_by User? @relation("UserGroupAssigner", fields: [assigned_by_user_id], references: [user_id], onDelete: SetNull)
+
+  @@unique([user_id, group_id])
+  @@index([user_id])
+  @@index([group_id])
+  @@index([assigned_by_user_id])
+  @@map("user_groups")
+}
+
+// GroupPermission Junction Table
+model GroupPermission {
+  id            String    @id @default(uuid()) @db.Uuid
+  group_id      String    @db.Uuid
+  permission_id String    @db.Uuid
+  created_at    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+
+  group      Group      @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+  permission Permission @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade)
+
+  @@unique([group_id, permission_id])
+  @@index([group_id])
+  @@index([permission_id])
+  @@map("group_permissions")
+}
+
+// UserPermission Junction Table (for direct user permissions)
+model UserPermission {
+  id            String    @id @default(uuid()) @db.Uuid
+  user_id       String    @db.Uuid
+  permission_id String    @db.Uuid
+  created_at    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+
+  user       User       @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  permission Permission @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade)
+
+  @@unique([user_id, permission_id])
+  @@index([user_id])
+  @@index([permission_id])
+  @@map("user_permissions")
+}
+
+// Notification Model
+model Notification {
+  notification_id   String    @id @default(uuid()) @db.Uuid
+  user_id           String    @db.Uuid
+  title             String
+  message           String
+  notification_type String    @default("info") @map("notification_type") // 'info', 'success', 'warning', 'error', 'system', 'security', 'account_share'
+  category          String?   @default("general") // 'general', 'security', 'updates', 'marketing', 'system'
+  priority          String?   @default("normal") // 'low', 'normal', 'high', 'urgent'
+  is_read           Boolean   @default(false) @map("is_read")
+  read_at           DateTime? @map("read_at") @db.Timestamp(6)
+  action_url        String?   @map("action_url")
+  action_label      String?   @map("action_label")
+  icon              String?
+  image_url         String?   @map("image_url")
+  metadata          Json?     @db.JsonB
+  expires_at        DateTime? @map("expires_at") @db.Timestamp(6)
+  created_at        DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at        DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relations
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([is_read])
+  @@index([notification_type])
+  @@index([category])
+  @@index([created_at])
+  @@map("notifications")
+}
+
+// Media Model for file uploads
+model Media {
+  media_id      String   @id @default(uuid()) @db.Uuid
+  user_id       String   @db.Uuid
+  filename      String
+  original_name String   @map("original_name")
+  mime_type     String   @map("mime_type")
+  size          Int
+  path          String
+  url           String?
+  folder        String?  @default("uploads")
+  is_public     Boolean  @default(false) @map("is_public")
+  description   String?
+  alt_text      String?  @map("alt_text")
+  metadata      Json?    @db.JsonB
+  created_at    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relations
+  user   User          @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  access MediaAccess[]
+
+  @@index([user_id])
+  @@index([filename])
+  @@index([folder])
+  @@index([mime_type])
+  @@index([created_at])
+  @@map("media")
+}
+
+// MediaAccess Model for shared media access
+model MediaAccess {
+  access_id   String    @id @default(uuid()) @db.Uuid
+  media_id    String    @db.Uuid
+  user_id     String?   @db.Uuid // null for public/link access
+  access_key  String    @unique @map("access_key")
+  expires_at  DateTime? @map("expires_at") @db.Timestamp(6)
+  access_type String    @default("view") @map("access_type") // 'view', 'download', 'edit'
+  is_active   Boolean   @default(true) @map("is_active")
+  accessed_at DateTime? @map("accessed_at") @db.Timestamp(6)
+  created_at  DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+
+  // Relations
+  media Media @relation(fields: [media_id], references: [media_id], onDelete: Cascade)
+  user  User? @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([media_id])
+  @@index([user_id])
+  @@index([access_key])
+  @@index([expires_at])
+  @@map("media_access")
+}
+
+// Account Share Model - Represents active account sharing relationships
+model AccountShare {
+  share_id           String    @id @default(uuid()) @db.Uuid
+  owner_id           String    @db.Uuid
+  recipient_id       String    @db.Uuid
+  access_level       String    @default("view") @map("access_level") // 'view', 'limited', 'full'
+  custom_permissions Json?     @map("custom_permissions") @db.JsonB
+  status             String    @default("active") // 'active', 'suspended', 'revoked'
+  shared_at          DateTime  @default(now()) @map("shared_at") @db.Timestamp(6)
+  last_accessed_at   DateTime? @map("last_accessed_at") @db.Timestamp(6)
+  expires_at         DateTime? @map("expires_at") @db.Timestamp(6)
+  notes              String?
+  created_at         DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at         DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relations
+  owner     User @relation("ShareOwner", fields: [owner_id], references: [user_id], onDelete: Cascade)
+  recipient User @relation("ShareRecipient", fields: [recipient_id], references: [user_id], onDelete: Cascade)
+
+  // Activities for this share
+  activities AccountShareActivity[]
+
+  @@unique([owner_id, recipient_id])
+  @@index([owner_id])
+  @@index([recipient_id])
+  @@index([status])
+  @@index([access_level])
+  @@map("account_shares")
+}
+
+// Account Share Invitation Model - For pending invitations
+model AccountShareInvitation {
+  invitation_id      String    @id @default(uuid()) @db.Uuid
+  sender_id          String    @db.Uuid
+  recipient_id       String?   @db.Uuid // null if inviting by email (new user)
+  target_owner_id    String?   @map("target_owner_id") @db.Uuid // For 'request' type: the owner being requested access from
+  recipient_email    String?   @map("recipient_email")
+  access_level       String    @default("view") @map("access_level") // 'view', 'limited', 'full'
+  custom_permissions Json?     @map("custom_permissions") @db.JsonB
+  invitation_type    String    @default("share") @map("invitation_type") // 'share' (owner inviting) or 'request' (user requesting access)
+  status             String    @default("pending") // 'pending', 'accepted', 'declined', 'expired', 'cancelled'
+  invitation_token   String    @unique @map("token")
+  message            String?
+  response_note      String?   @map("response_note")
+  responded_at       DateTime? @map("responded_at") @db.Timestamp(6)
+  expires_at         DateTime  @map("expires_at") @db.Timestamp(6)
+  created_at         DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at         DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relations
+  sender      User  @relation("InvitationSender", fields: [sender_id], references: [user_id], onDelete: Cascade)
+  recipient   User? @relation("InvitationRecipient", fields: [recipient_id], references: [user_id], onDelete: Cascade)
+  targetOwner User? @relation("InvitationTargetOwner", fields: [target_owner_id], references: [user_id], onDelete: Cascade)
+
+  @@index([sender_id])
+  @@index([recipient_id])
+  @@index([target_owner_id])
+  @@index([recipient_email])
+  @@index([status])
+  @@index([invitation_token])
+  @@index([invitation_type])
+  @@map("account_share_invitations")
+}
+
+// Activity Log Model - General activity/audit log for all actions
+model ActivityLog {
+  log_id        String   @id @default(uuid()) @db.Uuid
+  user_id       String?  @db.Uuid
+  level         String   @default("info") // 'info', 'warn', 'error', 'debug', 'audit'
+  message       String
+  action        String?
+  module        String?
+  ip_address    String?  @map("ip_address")
+  user_agent    String?  @map("user_agent")
+  device        String?
+  browser       String?
+  os            String?
+  platform      String?  @default("web")
+  endpoint      String?
+  method        String?
+  status_code   Int?     @map("status_code")
+  request_id    String?  @map("request_id")
+  session_id    String?  @map("session_id")
+  metadata      Json?    @db.JsonB
+  error_details Json?    @map("error_details") @db.JsonB
+  duration_ms   Int?     @map("duration_ms")
+  created_at    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  // Relations
+  user User? @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
+
+  @@index([user_id])
+  @@index([level])
+  @@index([action])
+  @@index([module])
+  @@index([created_at])
+  @@map("activity_logs")
+}
+
+// Account Share Activity Model - Audit log for account sharing actions
+model AccountShareActivity {
+  activity_id   String   @id @default(uuid()) @db.Uuid
+  share_id      String?  @db.Uuid // null for invitation-related activities
+  user_id       String   @db.Uuid // The user who performed the action
+  action        String // 'invitation_sent', 'invitation_accepted', 'invitation_declined', 'access_granted', 'access_revoked', 'access_modified', 'login_as', 'action_performed'
+  action_detail String?  @map("action_detail")
+  ip_address    String?  @map("ip_address")
+  user_agent    String?  @map("user_agent")
+  metadata      Json?    @db.JsonB
+  created_at    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  // Relations
+  share AccountShare? @relation(fields: [share_id], references: [share_id], onDelete: SetNull)
+  user  User          @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([share_id])
+  @@index([user_id])
+  @@index([action])
+  @@index([created_at])
+  @@map("account_share_activities")
+}
+
+// Project Settings Model - Stores project information and branding
+model ProjectSettings {
+  id                Int       @id @default(autoincrement())
+  project_id        String?   @unique @map("project_id")
+  name              String?
+  title             String?
+  base_url          String?   @map("base_url")
+  support_email     String?   @map("support_email")
+  support_contact   String?   @map("support_contact")
+  company_address   String?   @map("company_address")
+  
+  // Logos
+  logo              String?   // Favicon
+  hlogo             String?   // Horizontal logo (with text)
+  flogo             String?   // Favicon/icon logo
+  
+  // Social Media Links
+  facebook          String?
+  twitter           String?
+  instagram         String?
+  linkedin          String?
+  youtube           String?
+  tiktok            String?
+  whatsapp          String?
+  vimeo             String?
+  pinterest         String?
+  
+  // SEO & Meta
+  meta_title        String?   @map("meta_title")
+  meta_description  String?   @map("meta_description")
+  meta_keywords     String?   @map("meta_keywords")
+  head_meta_data    String?   @map("head_meta_data")
+  body_meta_data    String?   @map("body_meta_data")
+  extra_meta_data   String?   @map("extra_meta_data")
+  
+  // Timestamps
+  created_at        DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at        DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@map("project_settings")
+}

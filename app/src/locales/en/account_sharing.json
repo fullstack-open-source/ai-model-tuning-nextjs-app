@@ -1,0 +1,148 @@
+{
+  "account_sharing": "Account Sharing",
+  "description": "Manage shared account access and collaborate securely",
+  "share_access": "Share Access",
+  "request_access": "Request Access",
+  
+  "tabs": {
+    "shared_with_me": "Shared with Me",
+    "shared_by_me": "Shared by Me",
+    "invitations": "Invitations",
+    "requests": "Access Requests",
+    "activity": "Activity"
+  },
+  
+  "statistics": {
+    "active_shares": "Active Shares",
+    "pending_invitations": "Pending Invitations",
+    "access_requests": "Access Requests",
+    "shared_by_me": "Shared by Me"
+  },
+  
+  "access_levels": {
+    "view_only": "View Only",
+    "view_only_description": "Can only view account information, no modifications allowed",
+    "limited": "Limited Access",
+    "limited_description": "Can view and perform limited actions",
+    "full": "Full Access",
+    "full_description": "Full access to all account features"
+  },
+  
+  "status": {
+    "active": "Active",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "declined": "Declined",
+    "revoked": "Revoked",
+    "expired": "Expired",
+    "cancelled": "Cancelled"
+  },
+  
+  "empty_states": {
+    "no_shared_accounts": "No Shared Accounts",
+    "no_shared_accounts_description": "When someone shares their account access with you, it will appear here.",
+    "no_shared_access": "No Shared Access",
+    "no_shared_access_description": "You haven't shared your account access with anyone yet.",
+    "no_pending_invitations": "No pending invitations",
+    "no_sent_invitations": "No sent invitations",
+    "no_access_requests": "No pending access requests",
+    "no_activity": "No activity yet"
+  },
+  
+  "invite_modal": {
+    "title": "Share Account Access",
+    "description": "Invite someone to access your account",
+    "recipient": "Recipient",
+    "recipient_placeholder": "Search by email or name...",
+    "access_level": "Access Level",
+    "message": "Message (optional)",
+    "message_placeholder": "Add a personal message...",
+    "send_invitation": "Send Invitation"
+  },
+  
+  "request_modal": {
+    "title": "Request Account Access",
+    "description": "Request access to another user's account",
+    "account_owner_email": "Account Owner Email",
+    "email_placeholder": "Enter email address...",
+    "message": "Message (optional)",
+    "message_placeholder": "Explain why you need access...",
+    "send_request": "Send Request"
+  },
+  
+  "actions": {
+    "accept": "Accept",
+    "decline": "Decline",
+    "grant": "Grant",
+    "revoke": "Revoke",
+    "leave": "Leave",
+    "cancel": "Cancel",
+    "resend": "Resend",
+    "edit": "Edit",
+    "access": "Access",
+    "view_details": "View Details"
+  },
+  
+  "confirmations": {
+    "revoke_share": "Are you sure you want to revoke this share?",
+    "leave_share": "Are you sure you want to leave this shared account?",
+    "cancel_invitation": "Are you sure you want to cancel this invitation?"
+  },
+  
+  "notifications": {
+    "invitation_sent": "Invitation sent successfully",
+    "request_sent": "Access request sent successfully",
+    "invitation_accepted": "Invitation accepted successfully",
+    "invitation_declined": "Invitation declined",
+    "share_revoked": "Share revoked successfully",
+    "share_left": "You have left the shared account"
+  },
+  
+  "accept_page": {
+    "title": "Account Share Invitation",
+    "subtitle": "You've been invited to access an account",
+    "wants_to_share": "wants to share their account with you",
+    "personal_message": "Personal Message",
+    "expires": "Expires",
+    "sign_in_prompt": "Sign in to accept this invitation",
+    "sign_in_description": "You need to be logged in to accept this invitation. If you don't have an account, you can create one.",
+    "create_account": "Create Account",
+    "sign_in": "Sign In",
+    "accept_invitation": "Accept Invitation",
+    "invitation_accepted": "Invitation Accepted!",
+    "invitation_declined": "Invitation Declined",
+    "you_now_have_access": "You now have {access_level} access to {owner_name}'s account.",
+    "declined_message": "You have declined this invitation. The sender will be notified.",
+    "view_shared_accounts": "View Shared Accounts",
+    "go_to_dashboard": "Go to Dashboard",
+    "invalid_invitation": "Invalid Invitation",
+    "invitation_expired": "Invitation Expired",
+    "expired_message": "This invitation expired on {date}. Please ask {sender} to send a new invitation.",
+    "already_responded": "Invitation {status}"
+  },
+  
+  "activity_types": {
+    "share_invited": "Sent account share invitation",
+    "share_accepted": "Share invitation accepted",
+    "share_declined": "Share invitation declined",
+    "share_revoked": "Account share access revoked",
+    "share_expired": "Account share expired",
+    "access_request_sent": "Access request sent",
+    "access_request_accepted": "Access request accepted",
+    "access_request_declined": "Access request declined",
+    "access_used": "Shared account accessed",
+    "permissions_updated": "Share settings updated",
+    "share_renewed": "Account share renewed"
+  },
+  
+  "labels": {
+    "shared": "Shared",
+    "by": "by",
+    "access_to": "Access to",
+    "received_invitations": "Received Invitations",
+    "sent_invitations": "Sent Invitations",
+    "requests_to_your_account": "Access Requests to Your Account",
+    "account_sharing_activity": "Account Sharing Activity"
+  }
+}
+

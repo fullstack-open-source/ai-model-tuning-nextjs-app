@@ -1,0 +1,235 @@
+# ==============================================================================
+# Docker Compose for Next.js Frontend with PostgreSQL, Redis, and pgAdmin
+# ==============================================================================
+
+services:
+  # ============================================================================
+  # PostgreSQL Database (Internal Only - No Port Exposure)
+  # ============================================================================
+  postgres:
+    image: postgres:18
+    container_name: nextjs-frontend-postgres
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-nextjs_db}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres123}
+      POSTGRES_DB: ${DATABASE_NAME:-postgres}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${DATABASE_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nextjs_frontend_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-nextjs_db} -d ${DATABASE_NAME:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  # ============================================================================
+  # Redis Cache (Internal Only - No Port Exposure)
+  # ============================================================================
+  redis:
+    image: redis:7.4-alpine
+    container_name: nextjs-frontend-redis
+    restart: unless-stopped
+    env_file: .env
+    command: >
+      sh -c "if [ -n \"$$REDIS_PASSWORD\" ]; then
+        redis-server --requirepass \"$$REDIS_PASSWORD\" --appendonly yes;
+      else
+        redis-server --appendonly yes;
+      fi"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    # No ports exposed - Redis is only accessible within Docker network
+    # Access from other containers via: redis:6379
+    volumes:
+      - redis_data:/data
+    networks:
+      - nextjs_frontend_network
+    healthcheck:
+      test: >
+        sh -c "if [ -n \"$$REDIS_PASSWORD\" ]; then
+          redis-cli -a \"$$REDIS_PASSWORD\" ping;
+        else
+          redis-cli ping;
+        fi"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ============================================================================
+  # Next.js Application
+  # ============================================================================
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        APP_INTERNAL_PORT: ${APP_INTERNAL_PORT:-3000}
+        API_MODE: ${APP_MODE:-production}
+        PRISMA_STUDIO_PORT: ${PRISMA_STUDIO_PORT:-5555}
+        ENABLE_PRISMA_STUDIO: ${ENABLE_PRISMA_STUDIO:-true}
+    image: mrdasdeveloper/nextjs-starter:base
+    container_name: nextjs-frontend
+    restart: unless-stopped
+    env_file: .env
+    # ports:
+    #   - "${APP_INTERNAL_PORT:-3000}:${APP_INTERNAL_PORT:-3000}"
+    #   - "${PRISMA_STUDIO_PORT:-5555}:${PRISMA_STUDIO_PORT:-5555}"
+    volumes:
+      - app_uploads:/frontend/public/uploads
+      - app_logs:/frontend/logs
+    networks:
+      - nextjs_frontend_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${APP_INTERNAL_PORT:-3000}/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+  # ============================================================================
+  # pgAdmin - PostgreSQL Management Tool
+  # ============================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: nextjs-frontend-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin@123}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./app/scripts/pgadmin-servers.json:/pgadmin4/servers.json:ro
+    networks:
+      - nextjs_frontend_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/misc/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ============================================================================
+  # Nginx Reverse Proxy (Optional)
+  # ============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: nextjs-frontend-nginx
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - PROXY_PORT=${PROXY_PORT:-3001}
+      - PRISMA_STUDIO_ALLOWED_IPS=${PRISMA_STUDIO_ALLOWED_IPS:-}
+    ports:
+      - "${PROXY_PORT:-3001}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/proxy.conf:/etc/nginx/proxy.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/docker-entrypoint.sh:/docker-entrypoint.sh:ro
+      - ./nginx/log:/var/log/nginx
+      - nginx_cache_media:/var/cache/nginx/media
+      - nginx_cache_api:/var/cache/nginx/api
+      - nginx_cache_static:/var/cache/nginx/static
+    entrypoint: ["/bin/sh", "/docker-entrypoint.sh"]
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - nextjs_frontend_network
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /var/run/nginx.pid && ps aux | grep -v grep | grep nginx || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+# ==============================================================================
+# Volumes
+# ==============================================================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  app_uploads:
+    driver: local
+  app_logs:
+    driver: local
+  nginx_cache_media:
+    driver: local
+  nginx_cache_api:
+    driver: local
+  nginx_cache_static:
+    driver: local
+
+# ==============================================================================
+# Networks
+# ==============================================================================
+networks:
+  nextjs_frontend_network:
+    name: nextjs_frontend_network
+    external: true
+    driver: bridge
