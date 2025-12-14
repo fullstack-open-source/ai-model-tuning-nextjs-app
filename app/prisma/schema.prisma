@@ -482,3 +482,175 @@ model ProjectSettings {
 
   @@map("project_settings")
 }
+
+
+
+// Bot Model
+model Bot {
+  bot_id              String   @id @default(uuid()) @db.Uuid
+  name                String   @db.VarChar(255)
+  description         String?  @db.Text
+  model               String   @db.VarChar(100) // Base model (e.g., "gpt-4o-mini-2024-07-18")
+  logo_url            String?  @map("logo_url") @db.VarChar(500)
+  fine_tuned_model_id String?  @map("fine_tuned_model_id") @db.VarChar(255) // Fine-tuned model ID from OpenAI
+  training_file_id    String?  @map("training_file_id") @db.VarChar(255) // OpenAI file ID
+  status              String   @default("inactive") @db.VarChar(20) // "active", "inactive", "training", "error"
+  settings            Json?    @db.JsonB // Bot settings (temperature, max_tokens, etc.)
+  created_by          String?  @map("created_by") @db.Uuid
+  created_at          DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at          DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relationships
+  fineTuneJobs    FineTuneJob[]
+  trainingReports TrainingReport[]
+
+  @@index([status])
+  @@index([created_by])
+  @@map("bot")
+}
+
+// Fine-tune Job Model
+model FineTuneJob {
+  job_id              String  @id @default(uuid()) @db.Uuid
+  bot_id              String  @map("bot_id") @db.Uuid
+  training_file_id    String  @map("training_file_id") @db.VarChar(255)
+  openai_job_id       String? @unique @map("openai_job_id") @db.VarChar(255) // OpenAI fine-tuning job ID
+  status              String  @default("pending") @map("status") @db.VarChar(30) // "pending", "validating_files", "running", "succeeded", "failed", "cancelled"
+  fine_tuned_model_id String? @map("fine_tuned_model_id") @db.VarChar(255)
+  error               Json?   @db.JsonB // Error details if failed
+  hyperparameters     Json?   @map("hyperparameters") @db.JsonB
+  trained_tokens      Int?    @map("trained_tokens")
+
+  // Time Tracking
+  created_at  DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  finished_at DateTime? @map("finished_at") @db.Timestamp(6)
+  updated_at  DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Phase Timestamps
+  validation_started_at DateTime? @map("validation_started_at") @db.Timestamp(6) // When validation phase started
+  validation_ended_at   DateTime? @map("validation_ended_at") @db.Timestamp(6) // When validation phase ended
+  training_started_at   DateTime? @map("training_started_at") @db.Timestamp(6) // When actual training started
+  training_ended_at     DateTime? @map("training_ended_at") @db.Timestamp(6) // When training ended
+
+  // Duration Tracking (in seconds)
+  total_duration_seconds      Int? @map("total_duration_seconds") // Total time from created_at to finished_at
+  validation_duration_seconds Int? @map("validation_duration_seconds") // Time spent in validation phase
+  training_duration_seconds   Int? @map("training_duration_seconds") // Time spent in actual training phase
+
+  // Training Metrics
+  training_cost_usd Float?  @map("training_cost_usd") @db.DoublePrecision // Estimated training cost
+  file_size_bytes   BigInt? @map("file_size_bytes") @db.BigInt // Size of training file
+  total_examples    Int?    @map("total_examples") // Number of training examples
+
+  // Enhancement Chain Tracking
+  parent_job_id String?       @map("parent_job_id") @db.Uuid // Parent job ID if this is an enhancement
+  parentJob     FineTuneJob?  @relation("EnhancementChain", fields: [parent_job_id], references: [job_id], onDelete: SetNull)
+  childJobs     FineTuneJob[] @relation("EnhancementChain")
+
+  // Relationships
+  bot             Bot              @relation(fields: [bot_id], references: [bot_id], onDelete: Cascade)
+  trainingReports TrainingReport[]
+
+  @@index([bot_id])
+  @@index([status])
+  @@index([openai_job_id])
+  @@index([created_at])
+  @@index([finished_at])
+  @@index([parent_job_id])
+  @@map("fine_tune_job")
+}
+
+// Dataset Model - Store generated training datasets and manage generation jobs
+model Dataset {
+  dataset_id              String   @id @default(uuid()) @db.Uuid
+  title                   String   @db.VarChar(255)
+  description             String?  @db.Text
+  dataset_type            String   @map("dataset_type") @db.VarChar(20) // "chat", "calling", "voice", "all"
+  content                 String?  @db.Text // JSONL content (null while generating)
+  training_content        String?  @map("training_content") @db.Text // 80% for training
+  test_content            String?  @map("test_content") @db.Text // 20% for testing
+  file_id                 String?  @map("file_id") @db.VarChar(255) // OpenAI file ID if uploaded
+  num_examples            Int?     @map("num_examples") // Number of examples (null while generating)
+  training_examples_count Int?     @map("training_examples_count") // Number of examples in training set
+  test_examples_count     Int?     @map("test_examples_count") // Number of examples in test set
+  tags                    String[] // Array of tags for categorization
+  metadata                Json?    @db.JsonB // Additional metadata (e.g., generation parameters)
+  is_active               Boolean  @default(true) @map("is_active")
+
+  // Generation job fields (merged from DatasetGenerationJob)
+  status          String    @default("pending") @db.VarChar(30) // "pending", "processing", "completed", "failed"
+  progress        Int       @default(0) // 0-100 percentage
+  current_batch   Int       @default(0) @map("current_batch")
+  total_batches   Int       @default(0) @map("total_batches")
+  generated_count Int       @default(0) @map("generated_count")
+  error           Json?     @db.JsonB // Error details if generation failed
+  completed_at    DateTime? @map("completed_at") @db.Timestamp(6)
+
+  created_by String?  @map("created_by") @db.Uuid
+  created_at DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relationships
+  createdBy       User?            @relation("DatasetCreator", fields: [created_by], references: [user_id], onDelete: SetNull)
+  trainingReports TrainingReport[]
+
+  @@index([created_by])
+  @@index([dataset_type])
+  @@index([is_active])
+  @@index([created_at])
+  @@index([title])
+  @@index([status])
+  @@map("dataset")
+}
+
+// Training Report Model - Store training and testing results
+model TrainingReport {
+  report_id         String  @id @default(uuid()) @db.Uuid
+  fine_tune_job_id  String? @map("fine_tune_job_id") @db.Uuid // Link to fine-tune job
+  bot_id            String? @map("bot_id") @db.Uuid // Link to bot
+  dataset_id        String? @map("dataset_id") @db.Uuid // Link to dataset used
+  training_file_id  String? @map("training_file_id") @db.VarChar(255) // Training file ID
+  test_file_id      String? @map("test_file_id") @db.VarChar(255) // Test file ID
+  training_examples Int     @map("training_examples") // Number of training examples
+  test_examples     Int     @map("test_examples") // Number of test examples
+
+  // Accuracy Metrics
+  accuracy   Float? @db.DoublePrecision // Overall accuracy (0-1)
+  precision  Float? @db.DoublePrecision // Precision score
+  recall     Float? @db.DoublePrecision // Recall score
+  f1_score   Float? @map("f1_score") @db.DoublePrecision // F1 score
+  perplexity Float? @db.DoublePrecision // Perplexity score
+
+  // Detailed Metrics (JSON)
+  detailed_metrics Json? @map("detailed_metrics") @db.JsonB // Detailed metrics per category/type
+  confusion_matrix Json? @map("confusion_matrix") @db.JsonB // Confusion matrix data
+  test_results     Json? @map("test_results") @db.JsonB // Individual test results
+
+  // Training Info
+  model_name       String? @map("model_name") @db.VarChar(255) // Model used
+  base_model       String? @map("base_model") @db.VarChar(255) // Base model before fine-tuning
+  fine_tuned_model String? @map("fine_tuned_model") @db.VarChar(255) // Fine-tuned model ID
+
+  // Status
+  status String @default("pending") @db.VarChar(30) // "pending", "testing", "completed", "failed"
+  error  Json?  @db.JsonB // Error details if failed
+
+  // Metadata
+  metadata     Json?     @db.JsonB // Additional metadata
+  created_by   String?   @map("created_by") @db.Uuid
+  created_at   DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updated_at   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  completed_at DateTime? @map("completed_at") @db.Timestamp(6)
+
+  // Relationships
+  fineTuneJob FineTuneJob? @relation(fields: [fine_tune_job_id], references: [job_id], onDelete: SetNull)
+  bot         Bot?         @relation(fields: [bot_id], references: [bot_id], onDelete: SetNull)
+  dataset     Dataset?     @relation(fields: [dataset_id], references: [dataset_id], onDelete: SetNull)
+
+  @@index([fine_tune_job_id])
+  @@index([bot_id])
+  @@index([dataset_id])
+  @@index([status])
+  @@index([created_at])
+  @@map("training_report")
+}
