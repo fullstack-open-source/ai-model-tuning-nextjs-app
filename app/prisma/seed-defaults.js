@@ -597,6 +597,118 @@ const defaultPermissions = [
     description: 'Admin permission to view and manage all account shares',
     category: 'account_sharing'
   },
+
+  // ============================================
+  // BOT MODULE - Bot Configuration & Fine-tuning
+  // ============================================
+  {
+    name: 'View Bots',
+    codename: 'view_bots',
+    description: 'Can view bots and bot configurations',
+    category: 'bot'
+  },
+  {
+    name: 'View Bot',
+    codename: 'view_bot',
+    description: 'Can view individual bot details',
+    category: 'bot'
+  },
+  {
+    name: 'Create Bot',
+    codename: 'create_bot',
+    description: 'Can create new bots',
+    category: 'bot'
+  },
+  {
+    name: 'Edit Bot',
+    codename: 'edit_bot',
+    description: 'Can edit bot configurations (name, model, settings)',
+    category: 'bot'
+  },
+  {
+    name: 'Delete Bot',
+    codename: 'delete_bot',
+    description: 'Can delete bots',
+    category: 'bot'
+  },
+  {
+    name: 'View Fine-tune Jobs',
+    codename: 'view_fine_tune_jobs',
+    description: 'Can view fine-tuning jobs and their status',
+    category: 'bot'
+  },
+  {
+    name: 'Create Fine-tune Job',
+    codename: 'create_fine_tune_job',
+    description: 'Can create fine-tuning jobs for bots',
+    category: 'bot'
+  },
+  {
+    name: 'Cancel Fine-tune Job',
+    codename: 'cancel_fine_tune_job',
+    description: 'Can cancel running fine-tuning jobs',
+    category: 'bot'
+  },
+  {
+    name: 'Upload Training Data',
+    codename: 'upload_training_data',
+    description: 'Can upload training data files for fine-tuning',
+    category: 'bot'
+  },
+  {
+    name: 'Validate Training Data',
+    codename: 'validate_training_data',
+    description: 'Can validate training data files',
+    category: 'bot'
+  },
+  {
+    name: 'Manage Bots',
+    codename: 'manage_bots',
+    description: 'Can fully manage bots (create, edit, delete, fine-tune)',
+    category: 'bot'
+  },
+  {
+    name: 'Generate Training Data',
+    codename: 'generate_training_data',
+    description: 'Can generate training datasets using AI',
+    category: 'bot'
+  },
+  {
+    name: 'View Datasets',
+    codename: 'view_datasets',
+    description: 'Can view training datasets',
+    category: 'bot'
+  },
+  {
+    name: 'Create Dataset',
+    codename: 'create_dataset',
+    description: 'Can create new training datasets',
+    category: 'bot'
+  },
+  {
+    name: 'Edit Dataset',
+    codename: 'edit_dataset',
+    description: 'Can edit training datasets',
+    category: 'bot'
+  },
+  {
+    name: 'Delete Dataset',
+    codename: 'delete_dataset',
+    description: 'Can delete training datasets',
+    category: 'bot'
+  },
+  {
+    name: 'View Training Reports',
+    codename: 'view_training_reports',
+    description: 'Can view training and testing reports',
+    category: 'bot'
+  },
+  {
+    name: 'Manage Datasets',
+    codename: 'manage_datasets',
+    description: 'Can fully manage datasets (create, edit, delete, generate)',
+    category: 'bot'
+  }
   
 ];
 
@@ -691,7 +803,14 @@ const defaultGroups = [
       // Account Sharing
       'view_account_sharing', 'share_account', 'request_account_access',
       'accept_account_share', 'revoke_account_share', 'view_share_activity',
-      'manage_account_sharing', 'admin_manage_shares'
+      'manage_account_sharing', 'admin_manage_shares',
+
+      // Bots (Full)
+      'view_bots', 'view_bot', 'create_bot', 'edit_bot', 'delete_bot',
+      'view_fine_tune_jobs', 'create_fine_tune_job', 'cancel_fine_tune_job',
+      'upload_training_data', 'validate_training_data', 'manage_bots',
+      'generate_training_data', 'view_datasets', 'create_dataset', 'edit_dataset',
+      'delete_dataset', 'view_training_reports', 'manage_datasets'
     ]
   },
   {
@@ -748,7 +867,14 @@ const defaultGroups = [
       // Account Sharing
       'view_account_sharing', 'share_account', 'request_account_access',
       'accept_account_share', 'revoke_account_share', 'view_share_activity',
-      'manage_account_sharing'
+      'manage_account_sharing',
+
+      // Bots (Full)
+      'view_bots', 'view_bot', 'create_bot', 'edit_bot', 'delete_bot',
+      'view_fine_tune_jobs', 'create_fine_tune_job', 'cancel_fine_tune_job',
+      'upload_training_data', 'validate_training_data', 'manage_bots',
+      'generate_training_data', 'view_datasets', 'create_dataset', 'edit_dataset',
+      'delete_dataset', 'view_training_reports', 'manage_datasets'
     ]
   },
   {

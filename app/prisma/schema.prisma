@@ -109,6 +109,9 @@ model User {
   media        Media[]
   media_access MediaAccess[]
 
+  // Added relation: datasets created by this user
+  datasetsCreated Dataset[] @relation("DatasetCreator")
+
   // Notifications relation
   notifications Notification[]
 

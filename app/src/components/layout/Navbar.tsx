@@ -7,6 +7,7 @@ import { useAuthHook } from "@hooks/useAuth"
 import { Button } from "@components/ui/button"
 import { Input } from "@components/ui/input"
 import { useProject } from "@context/ProjectContext";
+import { datasetService } from "@services/finetune.service"
 
 import {
   LayoutDashboard,
@@ -28,6 +29,9 @@ import {
   FolderOpen,
   X,
   Share2,
+  Bot,
+  FileText,
+  Sparkles,
 } from "lucide-react"
 import { usePermissions } from "@hooks/usePermissions"
 import { useTheme } from "@context/ThemeContext"
@@ -44,6 +48,8 @@ export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const { user } = useAuthHook()
+    const { apiService } = useAuth()
+
   const { hasPermission, isAdmin, isSuperAdmin } = usePermissions()
   const { theme, setTheme } = useTheme()
   const [themeMenuOpen, setThemeMenuOpen] = useState(false)
@@ -59,6 +65,8 @@ export function Navbar() {
   const [searchFocused, setSearchFocused] = useState(false)
 
   const { projectInfo } = useProject();
+  const [datasetCount, setDatasetCount] = useState<number | null>(null)
+
   const projectName = projectInfo?.name || projectInfo?.title || "Nextjs Starter";
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -78,7 +86,8 @@ export function Navbar() {
   }, [themeMenuOpen])
   // Auto-open menu when on groups, permissions, or access-control pages - derive from pathname
   const isAccessControlActive = pathname?.startsWith("/admin/groups") || pathname?.startsWith("/admin/permissions") || pathname?.startsWith("/admin/access-control") || false
-  
+   const isBotActive = pathname?.startsWith("/admin/bots") || false
+
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     "access-control": false,
   })
@@ -86,7 +95,7 @@ export function Navbar() {
   // Derive current open state - auto-open if on that page
   const currentOpenState = useMemo(() => ({
     "access-control": openMenus["access-control"] || isAccessControlActive,
-  }), [openMenus, isAccessControlActive])
+  }), [openMenus, isAccessControlActive, isBotActive])
 
   // Permission checks for menu items (based on seed-defaults.js)
   const hasDashboardAccess = hasPermission("view_dashboard") || isAdmin || isSuperAdmin
@@ -106,6 +115,44 @@ export function Navbar() {
   const hasAccountSharingAccess = hasPermission("view_account_sharing") || hasPermission("manage_account_sharing") || 
                                    isAdmin || isSuperAdmin
   
+                                     // Bot access - Admin only
+  const hasBotAccess = isAdmin || isSuperAdmin
+  const hasFineTuneAccess = isAdmin || isSuperAdmin
+  
+  // Fetch dataset count
+  useEffect(() => {
+    if (apiService && hasFineTuneAccess) {
+      datasetService.setAuthApi(apiService)
+      datasetService.listDatasets({ limit: 1, offset: 0 })
+        .then((response) => {
+          if (response?.success && response.data) {
+            const datasets = (response.data as { datasets?: unknown[]; pagination?: { total?: number } })?.datasets
+            const pagination = (response.data as { datasets?: unknown[]; pagination?: { total?: number } })?.pagination
+            if (pagination?.total !== undefined) {
+              setDatasetCount(pagination.total)
+            } else if (Array.isArray(datasets)) {
+              // If no pagination, try to get full count
+              datasetService.listDatasets({ limit: 1000, offset: 0 })
+                .then((fullResponse) => {
+                  if (fullResponse?.success && fullResponse.data) {
+                    const fullDatasets = (fullResponse.data as { datasets?: unknown[] })?.datasets
+                    if (Array.isArray(fullDatasets)) {
+                      setDatasetCount(fullDatasets.length)
+                    }
+                  }
+                })
+                .catch(() => {
+                  // Silently fail
+                })
+            }
+          }
+        })
+        .catch(() => {
+          // Silently fail
+        })
+    }
+  }, [apiService, hasFineTuneAccess])
+  
   // Build navigation array with useMemo for performance
   const navigation: NavItem[] = useMemo(() => [
     // Dashboard - requires view_dashboard permission
@@ -115,6 +162,22 @@ export function Navbar() {
     // Notifications - requires view_notification permission
     ...(hasNotificationAccess ? [
       { name: "Notifications", href: "/notifications", icon: Bell },
+    ] : []),
+
+     // Bot Configuration - requires view_bots or manage_bots permission
+    ...(hasBotAccess ? [
+      {
+        name: "Bot Configuration",
+        href: "/admin/bots",
+        icon: Bot,
+          subItems: [
+            { name: "Bot Configuration", href: "/admin/bots", icon: Bot },
+            ...(hasFineTuneAccess ? [
+              { name: "Datasets", href: "/admin/bots/datasets", icon: FileText, divider: true, count: datasetCount ?? undefined },
+              { name: "Fine-tune", href: "/admin/bots/fine-tune", icon: Sparkles },
+            ] : []),
+          ],
+      },
     ] : []),
     // Account Sharing - requires view_account_sharing or manage_account_sharing permission
     ...(hasAccountSharingAccess ? [

@@ -8,7 +8,7 @@ services:
   # ============================================================================
   postgres:
     image: postgres:18
-    container_name: nextjs-frontend-postgres
+    container_name: ai-model-tuning-nextjs-app-postgres
     restart: unless-stopped
     env_file: .env
     environment:
@@ -42,7 +42,7 @@ services:
   # ============================================================================
   redis:
     image: redis:7.4-alpine
-    container_name: nextjs-frontend-redis
+    container_name: ai-model-tuning-nextjs-app-redis
     restart: unless-stopped
     env_file: .env
     command: >
@@ -91,8 +91,8 @@ services:
         API_MODE: ${APP_MODE:-production}
         PRISMA_STUDIO_PORT: ${PRISMA_STUDIO_PORT:-5555}
         ENABLE_PRISMA_STUDIO: ${ENABLE_PRISMA_STUDIO:-true}
-    image: mrdasdeveloper/nextjs-starter:base
-    container_name: nextjs-frontend
+    image: mrdasdeveloper/ai-model-tuning-nextjs-app:base
+    container_name: ai-model-tuning-nextjs-app
     restart: unless-stopped
     env_file: .env
     # ports:
@@ -128,7 +128,7 @@ services:
   # ============================================================================
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: nextjs-frontend-pgadmin
+    container_name: ai-model-tuning-nextjs-app-pgadmin
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
@@ -165,7 +165,7 @@ services:
   # ============================================================================
   nginx:
     image: nginx:alpine
-    container_name: nextjs-frontend-nginx
+    container_name: ai-model-tuning-nextjs-app-nginx
     restart: unless-stopped
     env_file:
       - .env
